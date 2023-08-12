@@ -26,6 +26,7 @@ import kotlin.math.cos
 import kotlin.math.roundToInt
 import kotlin.math.sin
 
+
 data class PieSettings(
     val size: Dp,
     val strokeWidth: Dp,
@@ -66,10 +67,10 @@ fun PieChart(
         val center = Offset(size.width / 2, size.height / 2)
         val radius = size.minDimension / 2.0f
 
-        //TODO use provided icon
-        val iconSize = 24.dp.toPx()
-
         segments.forEachIndexed { index, data ->
+
+            val iconSize = painter[index].intrinsicSize.toDpSize().width.toPx()
+
             drawArc(
                 color = data.color,
                 startAngle = data.startAngle.toFloat(),
@@ -85,6 +86,7 @@ fun PieChart(
 
             val iconY =
                 center.y + radius * sin(Math.toRadians(data.relativeAngle)).toFloat() - iconSize / 2
+
 
 
             with(painter[index]) {
