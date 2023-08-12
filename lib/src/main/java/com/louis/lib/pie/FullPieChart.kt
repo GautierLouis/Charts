@@ -1,4 +1,4 @@
-package com.louis.lib
+package com.louis.lib.pie
 
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.LinearEasing
@@ -12,29 +12,24 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ColorFilter
-import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.drawscope.Fill
 import androidx.compose.ui.graphics.drawscope.translate
-import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.graphics.vector.rememberVectorPainter
-import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.ExperimentalTextApi
-import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.drawText
+import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import com.louis.lib.PieSettings
 import com.louis.lib.pie.data.PieData
 import com.louis.lib.pie.data.PieDataFactory
 import kotlin.math.cos
 import kotlin.math.roundToInt
 import kotlin.math.sin
 
-data class PieSettings(
-    val strokeWidth: Dp,
-    val animDuration: Int,
-)
-
 @OptIn(ExperimentalTextApi::class)
 @Composable
-fun PieChart(
+fun FullPieChart(
     modifier: Modifier = Modifier,
     settings: PieSettings = PieSettings(strokeWidth = 30.dp, 0),
     data: List<PieData>
@@ -42,10 +37,9 @@ fun PieChart(
 
     val segments = PieDataFactory().calculate(data)
 
-    val icons = segments.map { ImageVector.vectorResource(id = it.icon) }
-    val painter = icons.map { rememberVectorPainter(image = it) }
-
     val animateFloat = segments.map { remember { Animatable(0f) } }
+
+    val textMeasure = rememberTextMeasurer()
 
     LaunchedEffect(animateFloat) {
         animateFloat.forEachIndexed { index, anim ->
@@ -77,29 +71,30 @@ fun PieChart(
                 color = data.color,
                 startAngle = data.startAngle.toFloat(),
                 sweepAngle = data.sweepAngle.toFloat() * animateFloat[index].value,
-                useCenter = false,
+                useCenter = true,
                 topLeft = Offset(center.x - radius, center.y - radius),
                 size = Size(radius * 2, radius * 2),
-                style = Stroke(settings.strokeWidth.toPx()),
+                style = Fill,
             )
 
             val iconX =
-                center.x + radius * cos(Math.toRadians(data.relativeAngle)).toFloat() - iconSize / 2
+                center.x + radius / 2 * cos(Math.toRadians(data.relativeAngle)).toFloat() - iconSize / 2
 
             val iconY =
-                center.y + radius * sin(Math.toRadians(data.relativeAngle)).toFloat() - iconSize / 2
+                center.y + radius / 2 * sin(Math.toRadians(data.relativeAngle)).toFloat() - iconSize / 2
 
-
-            with(painter[index]) {
-                translate(
-                    left = iconX,
-                    top = iconY
-                ) {
-                    draw(
-                        painter[index].intrinsicSize,
-                        colorFilter = ColorFilter.tint(Color.White)
-                    )
-                }
+            translate(
+                left = iconX,
+                top = iconY
+            ) {
+                drawText(
+                    textMeasurer = textMeasure, text = "Text on Canvas!",
+                    style = TextStyle(
+                        fontSize = 8.sp,
+                        color = Color.White
+                    ),
+                    topLeft = Offset.Zero
+                )
             }
         }
     }

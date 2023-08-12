@@ -8,4 +8,6 @@ internal data class PieSegment(
     val sweepAngle: Double,
     val color: Color,
     @DrawableRes val icon: Int
-)
+) {
+    val relativeAngle = startAngle + (sweepAngle / 2)
+}
