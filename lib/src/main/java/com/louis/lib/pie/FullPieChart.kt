@@ -31,7 +31,7 @@ import kotlin.math.sin
 @Composable
 fun FullPieChart(
     modifier: Modifier = Modifier,
-    settings: PieSettings = PieSettings(strokeWidth = 30.dp, 0),
+    settings: PieSettings = PieSettings(200.dp, strokeWidth = 30.dp, 0),
     data: List<PieData>
 ) {
 

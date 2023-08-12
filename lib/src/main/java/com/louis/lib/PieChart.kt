@@ -18,7 +18,6 @@ import androidx.compose.ui.graphics.drawscope.translate
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.res.vectorResource
-import androidx.compose.ui.text.ExperimentalTextApi
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.louis.lib.pie.data.PieData
@@ -28,15 +27,15 @@ import kotlin.math.roundToInt
 import kotlin.math.sin
 
 data class PieSettings(
+    val size: Dp,
     val strokeWidth: Dp,
     val animDuration: Int,
 )
 
-@OptIn(ExperimentalTextApi::class)
 @Composable
 fun PieChart(
-    modifier: Modifier = Modifier,
-    settings: PieSettings = PieSettings(strokeWidth = 30.dp, 0),
+    modifier: Modifier,
+    settings: PieSettings = PieSettings(200.dp, 50.dp, 1500),
     data: List<PieData>
 ) {
 
@@ -60,11 +59,9 @@ fun PieChart(
         }
     }
 
-    Canvas(
-        modifier = Modifier
-            .padding(20.dp)
-            .then(modifier)
-    ) {
+
+
+    Canvas(modifier = modifier.padding(settings.strokeWidth / 2)) {
 
         val center = Offset(size.width / 2, size.height / 2)
         val radius = size.minDimension / 2.0f
