@@ -67,14 +67,14 @@ fun PieChart(
         val center = Offset(size.width / 2, size.height / 2)
         val radius = size.minDimension / 2.0f
 
-        segments.forEachIndexed { index, data ->
+        segments.forEachIndexed { index, segment ->
 
             val iconSize = painter[index].intrinsicSize.toDpSize().width.toPx()
-
+            val progress = segment.sweepAngle * animateFloat[index].value
             drawArc(
-                color = data.color,
-                startAngle = data.startAngle.toFloat(),
-                sweepAngle = data.sweepAngle.toFloat() * animateFloat[index].value,
+                color = segment.color,
+                startAngle = segment.startAngle.toFloat(),
+                sweepAngle = progress.toFloat(),
                 useCenter = false,
                 topLeft = Offset(center.x - radius, center.y - radius),
                 size = Size(radius * 2, radius * 2),
@@ -82,22 +82,22 @@ fun PieChart(
             )
 
             val iconX =
-                center.x + radius * cos(Math.toRadians(data.relativeAngle)).toFloat() - iconSize / 2
+                center.x + radius * cos(Math.toRadians(segment.relativeAngle)).toFloat() - iconSize / 2
 
             val iconY =
-                center.y + radius * sin(Math.toRadians(data.relativeAngle)).toFloat() - iconSize / 2
+                center.y + radius * sin(Math.toRadians(segment.relativeAngle)).toFloat() - iconSize / 2
 
-
-
-            with(painter[index]) {
-                translate(
-                    left = iconX,
-                    top = iconY
-                ) {
-                    draw(
-                        painter[index].intrinsicSize,
-                        colorFilter = ColorFilter.tint(Color.White)
-                    )
+            if (progress >= (segment.sweepAngle / 2)) {
+                with(painter[index]) {
+                    translate(
+                        left = iconX,
+                        top = iconY
+                    ) {
+                        draw(
+                            painter[index].intrinsicSize,
+                            colorFilter = ColorFilter.tint(Color.White)
+                        )
+                    }
                 }
             }
         }
